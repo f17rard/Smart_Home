@@ -1,73 +1,224 @@
 ================================================================================
-                        COMANDOS DE GIT - GUÍA RÁPIDA
+                        COMANDOS DE GIT - GUÍA RÁPIDA COMPLETA
 ================================================================================
 
 CONFIGURACIÓN INICIAL
 ================================================================================
-git config --global user.name "Tu Nombre"
-git config --global user.email "tu@email.com"
+git config --global user.name "Tu Nombre"        # Configurar nombre globalmente
+git config --global user.email "tu@email.com"    # Configurar email globalmente
+git config --local user.name "Tu Nombre"         # Configurar solo en este repo
+git config --list                                # Ver toda la configuración
+git config user.name                             # Ver configuración específica
 
 
 CREAR Y CLONAR REPOSITORIOS
 ================================================================================
-git init                    # Inicializar un repo local
-git clone <url>            # Clonar un repositorio
+git init                    # Inicializar un repositorio local
+git init <carpeta>          # Inicializar repo en una carpeta específica
+git clone <url>             # Clonar un repositorio
+git clone <url> <carpeta>   # Clonar en una carpeta con nombre específico
 
 
-VER ESTADO
+VER ESTADO E HISTORIAL
 ================================================================================
-git status                 # Ver cambios
-git log                    # Ver historial de commits
-git log --oneline          # Ver historial resumido
-git diff                   # Ver cambios sin stagear
-git diff --staged          # Ver cambios ya stageados
+git status                  # Ver estado actual (cambios, staging, etc)
+git status -s               # Estado en formato resumido
+git log                     # Ver historial de commits
+git log --oneline           # Ver historial resumido (una línea por commit)
+git log -n 5                # Ver últimos 5 commits
+git log --graph --all --decorate  # Ver historial en árbol
+git log --author="nombre"   # Ver commits de un autor específico
+git log --since="2 weeks ago"  # Ver commits desde una fecha
+git log <archivo>           # Ver historial de un archivo específico
+git diff                    # Ver cambios sin stagear
+git diff --staged           # Ver cambios ya stageados
+git diff <rama1> <rama2>    # Comparar dos ramas
+git show <commit>           # Ver detalles de un commit específico
+git blame <archivo>         # Ver quién modificó cada línea
+git reflog                  # Ver historial de cambios de referencias
 
 
-HACER CAMBIOS
+HACER CAMBIOS (STAGING Y COMMITS)
 ================================================================================
-git add <archivo>          # Stagear un archivo específico
-git add .                  # Stagear todos los cambios
-git commit -m "mensaje"    # Hacer commit con mensaje
-git commit -am "mensaje"   # Stagear y commitear archivos modificados
+git add <archivo>           # Stagear un archivo específico
+git add .                   # Stagear todos los cambios en el directorio actual
+git add -A                  # Stagear todos los cambios (equivalente a git add .)
+git add -u                  # Stagear solo archivos modificados y eliminados
+git add <carpeta>/          # Stagear todos los archivos de una carpeta
+git add *.txt               # Stagear archivos con patrón específico
+git add -p                  # Stagear cambios de forma interactiva (por fragmentos)
+
+git commit -m "mensaje"     # Hacer commit con mensaje
+git commit -am "mensaje"    # Stagear y commitear archivos modificados
+git commit --amend          # Modificar el último commit
+git commit --amend --no-edit  # Añadir cambios al último commit sin cambiar mensaje
 
 
-RAMAS
+RAMAS (BRANCHING)
 ================================================================================
-git branch                 # Listar ramas locales
-git branch -a              # Listar todas las ramas (locales y remotas)
-git branch <nombre>        # Crear una nueva rama
-git checkout <rama>        # Cambiar a una rama existente
-git checkout -b <rama>     # Crear y cambiar a una rama nueva
-git merge <rama>           # Mergear rama especificada a rama actual
-git branch -d <rama>       # Eliminar una rama
-git branch -D <rama>       # Eliminar una rama forzosamente
+git branch                  # Listar ramas locales
+git branch -a               # Listar todas las ramas (locales y remotas)
+git branch <nombre>         # Crear una nueva rama
+git branch -d <rama>        # Eliminar una rama (seguro)
+git branch -D <rama>        # Eliminar una rama forzosamente
+git branch -m <rama_vieja> <rama_nueva>  # Renombrar rama
+git branch -v               # Ver ramas con último commit
+git branch --merged         # Ver ramas mergeadas
+
+git checkout <rama>         # Cambiar a una rama existente
+git checkout -b <rama>      # Crear y cambiar a una rama nueva
+git switch <rama>           # Alternativa moderna para cambiar rama
+git switch -c <rama>        # Alternativa moderna para crear y cambiar
+
+
+FUSIONAR CAMBIOS (MERGE)
+================================================================================
+git merge <rama>            # Mergear rama especificada a rama actual
+git merge --no-ff <rama>    # Mergear creando commit de merge
+git merge --squash <rama>   # Mergear comprimiendo todos los commits
+git merge --abort           # Abortar un merge en progreso
+
+
+MANEJAR CONFLICTOS
+================================================================================
+git status                  # Ver archivos con conflicto
+# Editar archivos con conflicto manualmente
+git add <archivo>           # Stagear archivo resuelto
+git commit                  # Completar el merge
+
+
+REORGANIZAR HISTORIAL (REBASE)
+================================================================================
+git rebase <rama>           # Reorganizar commits sobre otra rama
+git rebase -i HEAD~3        # Reorganizar últimos 3 commits (interactivo)
+git rebase --abort          # Abortar un rebase en progreso
+git rebase --continue       # Continuar después de resolver conflictos
+
+
+CHERRY-PICK (APLICAR COMMITS ESPECÍFICOS)
+================================================================================
+git cherry-pick <commit>    # Aplicar un commit específico a rama actual
+git cherry-pick <commit1> <commit2>  # Aplicar múltiples commits
+git cherry-pick --abort     # Cancelar cherry-pick
+
+
+ETIQUETAS (TAGS)
+================================================================================
+git tag                     # Listar etiquetas
+git tag <nombre>            # Crear etiqueta en commit actual
+git tag -a <nombre> -m "mensaje"  # Crear etiqueta anotada
+git tag -d <nombre>         # Eliminar etiqueta local
+git push origin <nombre>    # Enviar etiqueta al remoto
+git push origin --tags      # Enviar todas las etiquetas
+
+
+GUARDAR CAMBIOS TEMPORALES (STASH)
+================================================================================
+git stash                   # Guardar cambios temporalmente
+git stash list              # Ver cambios guardados
+git stash pop               # Restaurar últimos cambios guardados
+git stash apply             # Aplicar cambios sin borrarlos del stash
+git stash drop              # Eliminar cambios guardados
+git stash clear             # Eliminar todos los stashes
 
 
 SINCRONIZAR CON REMOTO
 ================================================================================
-git remote -v              # Ver repositorios remotos configurados
+git remote -v               # Ver repositorios remotos configurados
 git remote add origin <url>  # Agregar un repositorio remoto
-git push                   # Enviar cambios al remoto
-git push origin <rama>     # Enviar rama específica al remoto
-git pull                   # Traer y mergear cambios del remoto
-git fetch                  # Traer cambios sin mergear
+git remote remove origin    # Eliminar repositorio remoto
+git remote rename origin nuevo_nombre  # Renombrar repositorio remoto
+
+git push                    # Enviar cambios al remoto (rama actual)
+git push origin <rama>      # Enviar rama específica al remoto
+git push -u origin <rama>   # Enviar y establecer rama por defecto
+git push origin --all       # Enviar todas las ramas
+git push origin <tag>       # Enviar etiqueta específica
+git push origin --force     # Forzar push (CUIDADO: puede sobreescribir)
+git push origin :<rama>     # Eliminar rama en remoto
+
+git pull                    # Traer y mergear cambios del remoto
+git pull origin <rama>      # Traer rama específica
+git fetch                   # Traer cambios sin mergear
+git fetch origin            # Traer cambios del remoto específico
+git fetch --all             # Traer cambios de todos los remotos
 
 
 DESHACER CAMBIOS
 ================================================================================
-git restore <archivo>      # Descartar cambios locales de un archivo
-git restore --staged <archivo>  # Unstagear un archivo
-git revert <commit>        # Deshacer un commit creando uno nuevo
-git reset --hard <commit>  # Volver a un commit anterior (CUIDADO: borra cambios)
-git reset --soft <commit>  # Volver a un commit pero mantiene los cambios
+git restore <archivo>       # Descartar cambios locales de un archivo
+git restore --staged <archivo>  # Unstagear un archivo (moderno)
+git reset <archivo>         # Unstagear un archivo (clásico)
+git reset --soft <commit>   # Volver a commit pero mantiene los cambios
+git reset --mixed <commit>  # Volver a commit y unstagea cambios (por defecto)
+git reset --hard <commit>   # Volver a commit anterior (CUIDADO: borra cambios)
+git revert <commit>         # Deshacer un commit creando uno nuevo (seguro)
+git clean -fd               # Eliminar archivos sin seguimiento
 
 
-CONSEJOS ÚTILES
+BÚSQUEDA E INSPECCIÓN
 ================================================================================
-- Siempre crea una rama antes de hacer cambios importantes
-- Haz commits frecuentes con mensajes descriptivos
-- Usa git pull antes de hacer git push para evitar conflictos
-- El orden correcto: git init → git config → git add → git commit → git push
-- Verifica el estado con "git status" antes de hacer cambios importantes
+git grep "texto"            # Buscar texto en archivos rastreados
+git grep "patrón" <rama>    # Buscar en rama específica
+git bisect start            # Iniciar búsqueda binaria de bugs
+git bisect bad <commit>     # Marcar commit como malo
+git bisect good <commit>    # Marcar commit como bueno
+git bisect reset            # Terminar búsqueda binaria
+
+
+IGNORAR ARCHIVOS (.GITIGNORE)
+================================================================================
+# Crear archivo .gitignore en la raíz del repo con:
+*.log                       # Ignorar archivos .log
+__pycache__/                # Ignorar directorios
+node_modules/               # Ignorar carpeta específica
+.env                        # Ignorar archivo específico
+*.pyc                       # Ignorar bytecode Python
+/carpeta/                   # Ignorar carpeta (no archivo)
+
+
+FLUJO TÍPICO DE TRABAJO (GIT WORKFLOW)
+================================================================================
+1. git status               # Verificar estado actual
+2. git pull                 # Traer cambios del remoto
+3. git checkout -b feature-branch  # Crear rama para feature
+4. # Hacer cambios en archivos
+5. git status               # Ver qué cambió
+6. git add .                # Stagear cambios
+7. git commit -m "descripción"  # Hacer commit
+8. git push -u origin feature-branch  # Enviar rama
+9. # Crear Pull Request en GitHub/GitLab/etc
+10. git checkout main       # Volver a rama principal
+11. git pull                # Traer cambios mergeados
+12. git branch -d feature-branch  # Eliminar rama local
+
+
+CONSEJOS Y MEJORES PRÁCTICAS
+================================================================================
+✓ Siempre crea una rama antes de hacer cambios importantes
+✓ Haz commits frecuentes con mensajes descriptivos y en inglés
+✓ Usa "git pull" antes de "git push" para evitar conflictos
+✓ Los mensajes de commit deben ser claros: "Fix bug" no "asdf"
+✓ Verifica con "git status" antes de hacer cambios importantes
+✓ Usa ".gitignore" para no incluir archivos innecesarios
+✓ Haz un commit por característica/fix lógico, no por línea
+✓ Revisa cambios con "git diff" antes de hacer commit
+✓ No fuerces push a la rama principal (main/master)
+✓ Usa etiquetas (tags) para versiones importantes
+
+COMANDOS DE EMERGENCIA
+================================================================================
+# "Deshice todo y quiero volver a un commit anterior"
+git reset --hard <commit>   # ⚠️  BORRA TODOS LOS CAMBIOS
+git reflog                  # Ver historial para recuperar
+
+# "Hice commit en la rama equivocada"
+git cherry-pick <commit>    # Copiar commit a rama correcta
+git reset --hard HEAD~1     # Deshacer último commit en rama actual
+
+# "Necesito ver qué pasó"
+git log --all --graph --decorate  # Ver árbol completo
+git show <commit>           # Ver detalles de commit
+git blame <archivo>         # Ver quién hizo cada cambio
 
 ================================================================================
