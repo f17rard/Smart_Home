@@ -49,15 +49,15 @@ class CentralHub:
         ACactivado = False
         
         if self.estado == "MODO_AHORRO_ACTIVADO":
-            raise RuntimeError("Central bloqueada por seguridad energetica")
+            raise RuntimeError("Central bloqueada por seguridad energética")
         
         for dispo in self._dispositivos:    
             promedioBateria += dispo._consumo_energia(energia)
             if isinstance(dispo, AireAcondicionado):
                 ACactivado = True
         promedioBateria /= len(self._dispositivos)
-        if promedioBateria < 15 or (self.TarjetaR.frecuencia_ghz > 5.0 and ACactivado and energia >= 40):
-            self.estado = "MODO_AHORRO_ACTIVADO"
+        if promedioBateria < 15 or (self.TarjetaR.frecuencia_ghz > 5.0 and ACactivado and energia > 40):
+            self.estado = "MODO_AHORRO_CRITICO"
     
     
         
