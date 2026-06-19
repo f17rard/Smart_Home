@@ -37,6 +37,7 @@ class CentralHub:
         self.room = room
         self._dispositivos = []
         self.TarjetaR = TarjetaRed(direc_mac, frecu_ghz)
+        self.estado: str = ""
     
     def Añadir_dispositivo(self, dispositivo):
         if len(self._dispositivos) >= 4:
@@ -45,9 +46,21 @@ class CentralHub:
         
     def iniciar_ciclo(self, energia: float):
         promedioBateria = 0
-        for dispo in self._dispositivos:
+        ACactivado = False
+        
+        if self.estado == "MODO_AHORRO_ACTIVADO":
+            raise RuntimeError("Central bloqueada por seguridad energetica")
+        
+        for dispo in self._dispositivos:    
             promedioBateria += dispo._consumo_energia(energia)
+            if isinstance(dispo, AireAcondicionado):
+                ACactivado = True
         promedioBateria /= len(self._dispositivos)
+        if promedioBateria < 15 or (self.TarjetaR.frecuencia_ghz > 5.0 and ACactivado and energia >= 40):
+            self.estado = "MODO_AHORRO_ACTIVADO"
+    
+    
+        
         print(promedioBateria)
             
     def desvincular_dispositivo(self, name):
@@ -72,7 +85,7 @@ AC01 = AireAcondicionado("AC_cuarto")
 LI03 = LuzInteligente("luz_nocturna")
 LI04 = LuzInteligente("luz luz")
 
-CH01 = CentralHub("HUB-01", "habitación", "direc_mac", 5.0)
+CH01 = CentralHub("HUB-01", "habitación", "direc_mac", 5.1)
 
 CH01.Añadir_dispositivo(LI01)
 CH01.Añadir_dispositivo(LI02)
@@ -80,3 +93,4 @@ CH01.Añadir_dispositivo(LI03)
 CH01.Añadir_dispositivo(AC01)
 
 CH01.iniciar_ciclo(45)
+CH01.iniciar_ciclo(20)
