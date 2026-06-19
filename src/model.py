@@ -14,33 +14,59 @@ class Dispositivo(ABC):
     bateria = 100
     
     @abstractmethod
-    def consumo_energia(energia: int):
+    def _consumo_energia(energia: int):
         pass
 
-class LucesInteligentes(Dispositivo):
+class LuzInteligente(Dispositivo):
     
-    def consumo_energia(self):
+    def _consumo_energia(self, energia):
         self.bateria -= 2.5
         return self.bateria
     
 class AireAcondicionado(Dispositivo):
     
-    def consumo_energia(self, energia):
-        self.bateria -= self.bateria*energia
+    def _consumo_energia(self, energia):
+        self.bateria -= self.bateria*energia/1000
+        return self.bateria
 
 class CentralHub:
     def __init__(self, name: str, room: str, direc_mac:str, frecu_ghz: float):
         self.name = name
         self.room = room
-        self._dispositivios = []
+        self.__dispositivos = []
         self.TarjetaR = TarjetaRed(direc_mac, frecu_ghz)
+        self.Cbateria = 100
     
-    def __pos__init__(self): #verificar que no hayan más de 4 dispositivos
-        if(len(self._dispositivios) == 4):
+    def Añadir_dispositivo(self, dispositivo):
+        if len(self.__dispositivos) >= 4:
             raise ValueError("Capacidad de la central agotada.")
+        self.__dispositivos.append(dispositivo)
+        
+    def iniciar_ciclo(self, energia: int):
+        consumo = 0
+        for dispo in self.__dispositivos:
+            consumo = dispo._consumo_energia(energia)
+            self.Cbateria -= consumo/len(self.__dispositivos)
+        
+        print(consumo)
+            
+    def lista_dispositivos(self):
+        for dispositivo in self.__dispositivos:
+            print(dispositivo.name)
         
     
 
-# LI01 = LucesInteligentes("Luz_cuarto")
-# consumo = LI01.consumo_energia()
-# print(consumo)
+LI01 = LuzInteligente("Luz_cuarto")
+LI02 = LuzInteligente("Luz_escitorio")
+AC01 = AireAcondicionado("AC_cuarto")
+LI03 = LuzInteligente("luz_nocturna")
+LI04 = LuzInteligente("luz luz")
+
+CH01 = CentralHub("HUB-01", "habitación", "direc_mac", 5.0)
+
+CH01.Añadir_dispositivo(LI01)
+CH01.Añadir_dispositivo(LI02)
+CH01.Añadir_dispositivo(LI03)
+CH01.Añadir_dispositivo(AC01)
+
+CH01.iniciar_ciclo(50)
